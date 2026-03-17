@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Observers | Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    <style>
+        /* --- ADMIN MANAGE SPECIFIC ANIMATIONS --- */
+        
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseRed {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Add User Card */
+        .add-user-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            padding: 35px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 64, 30, 0.1);
+            border-left: 6px solid var(--gold);
+            animation: slideInUp 0.6s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .add-user-card::before {
+            content: '👤';
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-size: 8rem;
+            opacity: 0.05;
+            transform: rotate(-15deg);
+        }
+
+        .add-user-card h3 {
+            color: var(--pak-green);
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--pak-green);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .input-group input:focus {
+            border-color: var(--pak-green);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 64, 30, 0.1);
+        }
+
+        .btn-add {
+            background: var(--pak-green);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: 46px; /* Match input height + borders */
+            white-space: nowrap;
+        }
+
+        .btn-add:hover {
+            background: var(--gold);
+            color: var(--pak-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Users Table */
+        .users-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 64, 30, 0.08);
+            animation: slideInUp 0.6s 0.2s ease-out forwards;
+            opacity: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        thead {
+            background: var(--pak-green);
+            color: white;
+        }
+
+        th {
+            padding: 18px 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            animation: slideInUp 0.5s ease-out forwards;
+            opacity: 0;
+            transition: all 0.2s;
+        }
+
+        /* Stagger rows */
+        tbody tr:nth-child(1) { animation-delay: 0.3s; }
+        tbody tr:nth-child(2) { animation-delay: 0.35s; }
+        tbody tr:nth-child(3) { animation-delay: 0.4s; }
+        tbody tr:nth-child(n+4) { animation-delay: 0.45s; }
+
+        tbody tr:hover {
+            background: #f0fdf4;
+            transform: scale(1.01);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        .role-badge {
+            background: #e2e8f0;
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .protected-badge {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-delete {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-delete:hover {
+            background: var(--danger);
+            color: white;
+            border-color: var(--danger);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .btn-add {
+                width: 100%;
+            }
+            .users-table-container {
+                overflow-x: auto;
+            }
+            table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/admin/voter-list" class="brand" style="color:var(--gold);">
+                <span></span> Admin Dashboard
+            </a>
+            <nav class="nav-bar">
+                <span class="voter-name">Owner: {{ session.get('admin_username') }}</span>
+                <a href="/admin/voter-list">Voter List</a>
+                <a href="/admin/back-to-site">Exit Admin</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}" style="animation: slideInUp 0.5s; margin-bottom: 30px;">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <h2 class="section-title" style="margin-bottom: 10px; animation: slideInUp 0.5s; opacity: 0;">Manage Observers</h2>
+        <p style="color: var(--text-light); margin-bottom: 30px; animation: slideInUp 0.5s 0.1s forwards; opacity: 0;">Create accounts for election observers who need access to the audit portal.</p>
+
+        <!-- 1. Add New User Card -->
+        <form method="POST" class="add-user-card">
+            <h3>➕ Add New Observer</h3>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" name="username" required placeholder="e.g. observer_lahore" autocomplete="off">
+                </div>
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn-add">Create Account</button>
+            </div>
+        </form>
+
+        <!-- 2. Existing Users Table -->
+        <h3 style="color: var(--white); margin-bottom: 20px; font-size: 1.4rem; animation: slideInUp 0.5s 0.2s forwards; opacity: 0;">Current Observers</h3>
+        
+        <div class="users-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td style="font-weight: 700; color: var(--pak-green); font-size: 1.05rem;">
+                            {{ user['Username'] }}
+                            {% if user['Username'] == 'admin' %}
+                                <span style="font-size: 0.75rem; color: #94a3b8; font-weight: 400; margin-left: 8px;">(Main Owner)</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user['Username'] == 'admin' %}
+                                <span class="protected-badge">🔒 Protected</span>
+                            {% else %}
+                                <span class="role-badge">{{ user['Role'] }}</span>
+                            {% endif %}
+                        </td>
+                        <td style="text-align: right;">
+                            {% if user['Username'] != 'admin' %}
+                                <a href="/admin/delete-user/{{ user['Username'] }}" 
+                                   class="btn-delete"
+                                   onclick="return confirm('⚠️ Are you sure you want to delete observer \\'{{ user['Username'] }}\\'? This action cannot be undone.');">
+                                    🗑️ Delete
+                                </a>
+                            {% else %}
+                                <span style="color: #cbd5e1; font-size: 0.85rem; font-style: italic;">Cannot be deleted</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    
+                    {% if not users %}
+                    <tr>
+                        <td colspan="3" style="text-align: center; padding: 40px; color: #94a3b8;">
+                            No observers found. Create one above.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <p style="margin-top: 30px; font-size: 0.85rem; color: var(--text-light); text-align: center; animation: fadeIn 1s 0.5s forwards; opacity: 0;">
+            ⚠️ Only the Main Owner can create or delete observer accounts.
+        </p>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Election Commission of Pakistan - Admin Portal</p>
+    </footer>
+</body>
+</html>

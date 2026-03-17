@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cast Your Vote | Pakistan Election 2024</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <!-- Header (Same as before) -->
+    <header>
+        <div class="header-container">
+            <a href="/" class="brand">
+                <span>🇵🇰</span>
+                <div>
+                    Election Commission
+                    <span class="sub-brand">Islamic Republic of Pakistan</span>
+                </div>
+            </a>
+            <nav class="nav-bar">
+                {% if session.get('username') %}
+                    <span class="voter-name">{{ session['username'] }}</span>
+                    <a href="/">Vote</a>
+                    <a href="/results">Results</a>
+                    <a href="/history">History</a>
+                    <a href="/parties">Parties</a>
+                    <a href="/logout" class="logout">Logout</a>
+                {% else %}
+                    <a href="/login">Log In</a>
+                    <a href="/register" style="background:var(--gold); color:var(--pak-green); padding:8px 15px; border-radius:2px; font-weight:700;">Register</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    {% if session.get('username') %}
+    <!-- ==========================================
+         LOGGED IN: CLEAN VOTING FORM
+         ========================================== -->
+    <div class="clean-vote-section">
+        <div class="vote-layout">
+            
+            <!-- Left: Form -->
+            <div class="vote-content">
+                <div class="vote-branding">
+                    <h1>Cast Your <span>Ballot</span></h1>
+                    <p class="vote-tagline">Secure, anonymous, and verified digital voting.</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                {% if voted %}
+                    <div class="clean-form" style="text-align:center; border-top: 5px solid var(--success);">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">✅</div>
+                        <h2 style="color:var(--success); margin-bottom:10px;">Vote Recorded!</h2>
+                        <p style="color:#666; margin-bottom:25px;">Your vote has been securely encrypted and counted.</p>
+                        <a href="/results" class="btn-vote-now">View Live Results</a>
+                    </div>
+                {% else %}
+                    <form method="POST" class="clean-form">
+                        <!-- Location Selectors -->
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                            <div>
+                                <label>Select Province</label>
+                                <select id="province-select" onchange="updateCities()" required>
+                                    <option value="">-- Choose --</option>
+                                    {% for province in cities.keys() %}
+                                    <option value="{{ province }}">{{ province }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
+                                <label>Select City</label>
+                                <select id="city-select" name="city" required disabled>
+                                    <option value="">-- Choose --</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <label style="margin-top:10px;">Select Candidate</label>
+                        <div class="candidate-grid-clean">
+                            {% for c in candidates %}
+                            <label class="candidate-card-clean">
+                                <input type="radio" name="candidate" value="{{ c['Candidate'] }}" required>
+                                <span class="c-name-clean">{{ c['Candidate'] }}</span>
+                                <span class="c-party-clean">{{ c['Party'] }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        <button type="submit" class="btn-vote-now" style="margin-top:30px;">Submit Secure Ballot 🔒</button>
+                    </form>
+                {% endif %}
+            </div>
+
+            <!-- Right: Illustration (The Image You Liked) -->
+            <div class="vote-visual">
+                <!-- REPLACE THIS SRC WITH YOUR LOCAL IMAGE PATH e.g., url_for('static', filename='images/vote-box.png') -->
+               <img src="{{ url_for('static', filename='images/vote-box.png.jpg') }}" alt=>
+                <p style="margin-top:20px; color:#94a3b8; font-size:0.9rem; font-style:italic;">""</p>
+            </div>
+
+        </div>
+    </div>
+
+    {% else %}
+    <!-- ==========================================
+         NOT LOGGED IN: CLEAN LANDING PAGE
+         ========================================== -->
+    <div class="clean-vote-section">
+        <div class="vote-layout">
+            
+            <!-- Left: Text -->
+            <div class="vote-content">
+                <div class="vote-branding">
+                    <h1>Election <span>2024</span></h1>
+                    <p class="vote-tagline">Your Vote is Your Choice. Secure, Transparent, Digital.</p>
+                </div>
+                
+                <div style="display:flex; gap:20px; margin-top:40px;">
+                    <a href="/login" class="btn-vote-now" style="width:auto; display:inline-block;">Login to Vote</a>
+                    <a href="/register" class="btn-vote-now" style="width:auto; display:inline-block; background:white; color:var(--pak-green); border:2px solid var(--pak-green);">New Registration</a>
+                </div>
+
+                <div style="margin-top:50px; display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                    <div style="padding:20px; background:#f0fdf4; border-radius:8px;">
+                        <div style="font-size:2rem; margin-bottom:10px;">🔒</div>
+                        <h4 style="color:var(--pak-green); font-weight:700;">Encrypted</h4>
+                        <p style="font-size:0.9rem; color:#666;">Military-grade security.</p>
+                    </div>
+                    <div style="padding:20px; background:#f0fdf4; border-radius:8px;">
+                        <div style="font-size:2rem; margin-bottom:10px;">📊</div>
+                        <h4 style="color:var(--pak-green); font-weight:700;">Live Results</h4>
+                        <p style="font-size:0.9rem; color:#666;">Real-time updates.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Illustration -->
+            <div class="vote-visual">
+                 <!-- REPLACE THIS SRC WITH YOUR LOCAL IMAGE PATH -->
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/pakistan-election-day-illustration-download-in-svg-png-gif-file-formats--voting-ballot-box-flag-pack-holiday-illustrations-4676898.png?f=webp" alt="Pakistan Election Box">
+            </div>
+
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Footer -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <p>&copy; 2024 Election Commission of Pakistan.</p>
+            <p style="font-size:0.8rem; margin-top:10px; opacity:0.6;">Simulated Platform for Educational Purposes.</p>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);">
+                <a href="/admin/voter-list" style="color: #94a3b8; text-decoration: none; font-size: 0.75rem; opacity: 0.5; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">System Integrity</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for City Selection -->
+    <script>
+        const cityData = {
+            {% for province, city_list in cities.items() %}
+            "{{ province }}": [{% for city in city_list %}"{{ city }}"{% if not loop.last %}, {% endif %}{% endfor %}],
+            {% endfor %}
+        };
+        function updateCities() {
+            const p = document.getElementById('province-select');
+            const c = document.getElementById('city-select');
+            c.innerHTML = '<option value="">-- Select City --</option>';
+            if (p.value && cityData[p.value]) {
+                c.disabled = false;
+                cityData[p.value].forEach(city => {
+                    const opt = document.createElement('option');
+                    opt.value = city; opt.textContent = city;
+                    c.appendChild(opt);
+                });
+            } else { c.disabled = true; }
+        }
+    </script>
+</body>
+</html>

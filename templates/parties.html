@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Political Parties | Pakistan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+   
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="brand"><span>🇵🇰</span> Election Commission</a>
+            <nav class="nav-bar">
+                {% if session.get('username') %}
+                    <span class="voter-name">{{ session['username'] }}</span>
+                    <a href="/">Vote</a>
+                    <a href="/results">Results</a>
+                    <a href="/history">History</a>
+                    <a href="/parties">Parties</a>
+                    <a href="/logout" class="logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title" style="text-align: center;">Registered Political Parties</h2>
+        <div class="section-line" style="margin: 15px auto 40px;"></div>
+        <p style="text-align: center; color: var(--text-light); max-width: 700px; margin: 0 auto 50px; font-size: 1.1rem;">
+            Comprehensive profiles of major political parties participating in the General Election 2024.
+        </p>
+
+        <!-- DENSE GRID LAYOUT -->
+        <div class="parties-grid">
+            
+            {% for party in parties %}
+            <div class="party-card" style="border-top-color: {{ party.color }};">
+                
+                <!-- Header: Symbol & Name -->
+                <div class="card-header">
+                    <div class="party-symbol-box" style="background: {{ party.color }};">
+                        {% if party.symbol == 'Cricket Bat' %}🏏
+                        {% elif party.symbol == 'Lion' %}🦁
+                        {% elif party.symbol == 'Arrow' %}🏹
+                        {% elif party.symbol == 'Book' %}📖
+                        {% elif party.symbol == 'Kite' %}🪁
+                        {% elif party.symbol == 'Balance Scale' %}⚖️
+                        {% elif party.symbol == 'Pen' %}🖊️
+                        {% else %}🚩{% endif %}
+                    </div>
+                    <div class="party-info">
+                        <h3>{{ party.name }}</h3>
+                        <span class="party-acronym">{{ party.acronym }}</span>
+                    </div>
+                </div>
+
+                <!-- Body: Details -->
+                <div class="card-body">
+                    <div class="details-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Party Leader</span>
+                            <span class="detail-value">{{ party.leader }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Founded</span>
+                            <span class="detail-value">{{ party.founded }}</span>
+                        </div>
+                        <div class="detail-item" style="grid-column: span 2;">
+                            <span class="detail-label">Election Symbol</span>
+                            <span class="detail-value" style="font-size: 1.1rem;">{{ party.symbol }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Ideology -->
+                    <div class="ideology-section">
+                        <span class="ideology-title">Core Ideology</span>
+                        <p class="ideology-text">{{ party.ideology }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- FULL WIDTH REGISTRY BANNER -->
+            <div class="registry-banner">
+                <h3>📜 View Complete Party Registry</h3>
+                <p>
+                    For the full official list of all political parties allotted constituencies by the Election Commission of Pakistan, including minor parties and independents, download the official registry document.
+                </p>
+                <a href="https://ecp.gov.pk" target="_blank" class="btn-registry">
+                    📄 Download Official PDF List
+                </a>
+                <p style="margin-top: 15px; font-size: 0.8rem; opacity: 0.6;">
+                    Source: Election Commission of Pakistan Records
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER WITH SECRET LINK -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <p>&copy; 2024 Election Commission of Pakistan.</p>
+            <p style="font-size:0.8rem; margin-top:10px; opacity:0.6;">Simulated Platform for Educational Purposes.</p>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="/admin/voter-list" style="color: #475569; text-decoration: none; font-size: 0.75rem; opacity: 0.5; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">System Integrity</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

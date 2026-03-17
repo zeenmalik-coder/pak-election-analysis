@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if request.path == '/login' %}Login{% else %}Register{% endif %} | Election 2024</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+   
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="brand">
+                <span>🇵🇰</span> Election Commission
+            </a>
+            <nav class="nav-bar">
+                <a href="/">Home</a>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 60px;">
+        <div class="form-box">
+            <!-- Animated Welcome Text -->
+            <div class="welcome-text" style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color:var(--pak-green); font-size: 2rem; margin: 0;">
+                    {% if request.path == '/login' %}Hello, Voter!{% else %}Join Democracy{% endif %}
+                </h2>
+                <p style="color:var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; margin-top: 5px;">
+                    {% if request.path == '/login' %}Welcome back to the portal{% else %}Create your secure identity{% endif %}
+                </p>
+            </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }}" style="animation: fadeIn 0.5s;">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label>Username</label>
+                <input type="text" name="username" required autocomplete="off" placeholder="Enter your username">
+                
+                <label>Password</label>
+                <input type="password" name="password" required placeholder="••••••••">
+                
+                {% if request.path == '/register' %}
+                    <label>CNIC (XXXXX-XXXXXXX-X)</label>
+                    <input type="text" name="cnic" placeholder="12345-1234567-1" required pattern="\d{5}-\d{7}-\d{1}">
+                    
+                    <label>Phone Number</label>
+                    <input type="text" name="phone" placeholder="0300-1234567" required>
+                {% endif %}
+                
+                <button type="submit" class="btn btn-animate" style="margin-top:20px;">
+                    {% if request.path == '/login' %}Sign In Securely{% else %}Register Now{% endif %}
+                </button>
+            </form>
+            
+            <div style="text-align:center; margin-top:25px; padding-top:20px; border-top:1px solid #eee;">
+                {% if request.path == '/login' %}
+                    <p>New voter? <a href="/register" style="color:var(--pak-green); font-weight:700;">Create an account</a></p>
+                {% else %}
+                    <p>Already registered? <a href="/login" style="color:var(--pak-green); font-weight:700;">Login here</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER WITH SECRET LINK -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <p>&copy; 2024 Election Commission of Pakistan.</p>
+            <p style="font-size:0.8rem; margin-top:10px; opacity:0.6;">Simulated Platform for Educational Purposes.</p>
+            
+            <!-- SECRET ADMIN LINK (Hidden in plain sight) -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="/admin/voter-list" style="color: #475569; text-decoration: none; font-size: 0.75rem; opacity: 0.5; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">
+                    System Integrity
+                </a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

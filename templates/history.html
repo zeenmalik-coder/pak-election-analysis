@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election History | Pakistan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="brand"><span>🇵🇰</span> Election Commission</a>
+            <nav class="nav-bar">
+                {% if session.get('username') %}
+                    <span class="voter-name">{{ session['username'] }}</span>
+                    <a href="/">Vote</a>
+                    <a href="/results">Results</a>
+                    <a href="/history">History</a>
+                    <a href="/parties">Parties</a>
+                    <a href="/logout" class="logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title" style="text-align: center;">Democracy in Pakistan</h2>
+        <div class="section-line" style="margin: 15px auto 40px;"></div>
+        <p style="text-align: center; color: var(--text-light); max-width: 700px; margin: 0 auto 50px; font-size: 1.1rem;">
+            A comprehensive overview of general elections from 1970 to 2024.
+        </p>
+
+        <!-- DENSE GRID LAYOUT -->
+        <div class="history-grid">
+            
+            {% for election in elections %}
+            <div class="history-card">
+                <!-- Header -->
+                <div class="card-header">
+                    <span class="year-badge">{{ election.year }}</span>
+                    <span class="election-date">{{ election.date }}</span>
+                </div>
+
+                <!-- Winner -->
+                <div class="winner-section">
+                    <span class="winner-label">Winning Party / Candidate</span>
+                    <span class="winner-name">{{ election.winner }}</span>
+                    <span class="party-badge">{{ election.party }}</span>
+                </div>
+
+                <!-- Stats Row (Seats + Turnout) -->
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <span class="stat-label">Seats Won</span>
+                        <span class="stat-value">{{ election.seats }}</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-label">Voter Turnout</span>
+                        <span class="stat-value">{{ election.turnout }}</span>
+                        <div class="turnout-mini">
+                            <div class="turnout-bar-bg">
+                                <div class="turnout-bar-fill" style="width: {{ election.turnout|replace('%','') }}%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Context -->
+                <div class="context-box">
+                    <span class="context-title">📜 Historical Context</span>
+                    {{ election.context }}
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- FULL WIDTH LEARN MORE BANNER -->
+            <div class="learn-more-banner">
+                <h3>Want to Dive Deeper into History?</h3>
+                <p>
+                    This platform simulates the modern voting process. To explore the complete, detailed history of politics, constitutions, and elections in Pakistan from 1947 to present, visit our recommended comprehensive resource.
+                </p>
+                <a href="https://en.wikipedia.org/wiki/Elections_in_Pakistan" target="_blank" class="btn-learn">
+                    📖 Read Full History on Wikipedia
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FOOTER WITH SECRET LINK -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <p>&copy; 2024 Election Commission of Pakistan.</p>
+            <p style="font-size:0.8rem; margin-top:10px; opacity:0.6;">Simulated Platform for Educational Purposes.</p>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="/admin/voter-list" style="color: #475569; text-decoration: none; font-size: 0.75rem; opacity: 0.5; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">System Integrity</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

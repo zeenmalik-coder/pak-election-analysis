@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Results | Election 2024</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* --- ULTRA MODERN RESULTS LIST --- */
+
+.results-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    animation: slideInUp 0.6s ease-out forwards;
+}
+
+.result-row {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 64, 30, 0.05);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border-left: 6px solid #cbd5e1; /* Default Grey */
+    animation: slideInUp 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+/* Stagger Animations */
+.result-row:nth-child(1) { animation-delay: 0.1s; }
+.result-row:nth-child(2) { animation-delay: 0.2s; }
+.result-row:nth-child(3) { animation-delay: 0.3s; }
+.result-row:nth-child(4) { animation-delay: 0.4s; }
+.result-row:nth-child(5) { animation-delay: 0.5s; }
+
+/* Dynamic Borders based on Status */
+.result-row.leader { border-left-color: var(--success); background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 100%); }
+.result-row.trailer { border-left-color: var(--danger); }
+.result-row.contender { border-left-color: var(--pak-green); }
+
+.result-row:hover {
+    transform: translateX(10px) scale(1.01);
+    box-shadow: 0 10px 25px rgba(0, 64, 30, 0.15);
+    z-index: 2;
+}
+
+/* Layout Grid inside Row */
+.row-content {
+    display: grid;
+    grid-template-columns: 60px 1fr 120px 100px;
+    gap: 20px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+/* Rank Circle */
+.rank-badge {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    color: #64748b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    transition: all 0.3s;
+}
+.result-row.leader .rank-badge { background: var(--gold); color: white; transform: scale(1.1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+
+/* Candidate Info */
+.candidate-info h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--pak-green);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.candidate-party {
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
+    margin-top: 4px;
+    display: block;
+}
+
+/* Big Numbers */
+.vote-count {
+    text-align: right;
+}
+.vote-number {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+}
+.vote-percent {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+/* Status Badge */
+.status-badge {
+    text-align: right;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-left: auto;
+    white-space: nowrap;
+}
+.result-row.leader .status-badge { background: var(--success); color: white; box-shadow: 0 4px 10px rgba(22, 163, 74, 0.3); animation: pulseGreen 2s infinite; }
+.result-row.trailer .status-badge { background: var(--danger); color: white; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3); }
+.result-row.contender .status-badge { background: #f1f5f9; color: #64748b; }
+
+/* The Background Progress Bar */
+.progress-bg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 6px;
+    background: #e2e8f0;
+    width: 100%;
+    z-index: 1;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--pak-green), var(--gold));
+    width: 0%;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    border-radius: 0 4px 4px 0;
+}
+.result-row.leader .progress-fill { background: linear-gradient(90deg, var(--success), #4ade80); }
+.result-row.trailer .progress-fill { background: linear-gradient(90deg, var(--danger), #f87171); }
+
+@keyframes pulseGreen {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4); }
+    70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(22, 163, 74, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .row-content {
+        grid-template-columns: 40px 1fr;
+        grid-template-rows: auto auto;
+        gap: 10px;
+    }
+    .vote-count { grid-column: 2; text-align: left; display: flex; gap: 15px; align-items: baseline; }
+    .vote-number { font-size: 1.4rem; }
+    .status-badge { grid-column: 1 / -1; text-align: left; margin: 0; width: fit-content; }
+    .result-row:hover { transform: translateY(-5px); }
+}
+    </style>
+    
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="brand"><span>🇵🇰</span> Election Commission</a>
+            <nav class="nav-bar">
+                {% if session.get('username') %}
+                    <span class="voter-name">{{ session['username'] }}</span>
+                    <a href="/">Vote</a>
+                    <a href="/results">Results</a>
+                    <a href="/history">History</a>
+                    <a href="/parties">Parties</a>
+                    <a href="/logout" class="logout">Logout</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}{% for cat, msg in messages %}<div class="alert alert-{{ cat }}">{{ msg }}</div>{% endfor %}{% endif %}
+        {% endwith %}
+
+        <h2 class="section-title">Official Live Results</h2>
+        <div class="section-line"></div>
+        <p style="margin-bottom: 40px; color: var(--text-light);">Real-time vote tabulation and statistical analysis.</p>
+
+        <!-- ANIMATED STATS ROW -->
+        <div class="stats-row">
+            <!-- Card 1: Total Voters -->
+            <div class="stat-card">
+                <div class="stat-icon"></div>
+                <span class="stat-number">{{ total_voters }}</span>
+                <span class="stat-label">Total Voters</span>
+            </div>
+
+            <!-- Card 2: Leader -->
+            <div class="stat-card" style="border-left-color: var(--success);">
+                <div class="stat-icon"></div>
+                <span class="stat-number" style="font-size: 2rem; line-height: 1.2;">
+                    {{ winner }}
+                </span>
+                <span class="stat-label">Leading Candidate</span>
+                <span class="stat-sub text-leading">★ First Place</span>
+            </div>
+
+            <!-- Card 3: Trailing -->
+            <div class="stat-card" style="border-left-color: var(--danger);">
+                <div class="stat-icon"></div>
+                <span class="stat-number" style="font-size: 2rem; line-height: 1.2;">
+                    {{ loser }}
+                </span>
+                <span class="stat-label">Trailing Candidate</span>
+                <span class="stat-sub text-trailing">▼ Needs More Votes</span>
+            </div>
+
+            <!-- Card 4: Votes Cast -->
+            <div class="stat-card">
+                <div class="stat-icon"></div>
+                <span class="stat-number">{{ total_votes }}</span>
+                <span class="stat-label">Votes Cast</span>
+            </div>
+        </div>
+
+        <!-- Visual Analysis -->
+        <h3 style="margin: 50px 0 25px; color: var(--white); font-size: 1.5rem;">Visual Analysis</h3>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap:30px; margin-bottom:50px;">
+            <div class="chart-container">
+                <h4 style="text-align:center; margin-bottom:20px; color:var(--pak-green); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Votes by Candidate</h4>
+                {% if chart_bar %}
+                    <img src="data:image/png;base64,{{ chart_bar }}" style="width:100%; height:auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
+                {% else %}
+                    <div style="text-align:center; padding: 40px; color:#999;">
+                        <span style="font-size:3rem; display:block; margin-bottom:10px;"></span>
+                        Waiting for votes...
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="chart-container">
+                <h4 style="text-align:center; margin-bottom:20px; color:var(--pak-green); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Percentage Share</h4>
+                {% if chart_pie %}
+                    <img src="data:image/png;base64,{{ chart_pie }}" style="width:100%; height:auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
+                {% else %}
+                    <div style="text-align:center; padding: 40px; color:#999;">
+                        <span style="font-size:3rem; display:block; margin-bottom:10px;">🥧</span>
+                        No data available yet
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Detailed Table -->
+               <!-- Detailed Tabulation: MODERN LIST VIEW -->
+        <h3 style="margin: 50px 0 25px; color: var(--white); font-size: 1.5rem; display: flex; align-items: center; gap: 10px;">
+            📋 Detailed Tabulation
+        </h3>
+        
+        <div class="results-list">
+            {% for c in candidates %}
+            <!-- Determine Row Class -->
+            {% set row_class = 'contender' %}
+            {% if c['Candidate'] in winner %}{% set row_class = 'leader' %}{% endif %}
+            {% if c['Candidate'] in loser and total_votes > 0 %}{% set row_class = 'trailer' %}{% endif %}
+
+            <div class="result-row {{ row_class }}">
+                
+                <!-- Content Grid -->
+                <div class="row-content">
+                    <!-- 1. Rank -->
+                    <div class="rank-badge">#{{ loop.index }}</div>
+                    
+                    <!-- 2. Candidate Info -->
+                    <div class="candidate-info">
+                        <h4>{{ c['Candidate'] }}</h4>
+                        <span class="candidate-party">{{ c['Party'] }}</span>
+                    </div>
+                    
+                    <!-- 3. Votes & Percent -->
+                    <div class="vote-count">
+                        <span class="vote-number">{{ c['Votes'] }}</span>
+                        <span class="vote-percent">{{ "%.2f"|format(c.get('Percentage', 0)) }}%</span>
+                    </div>
+                    
+                    <!-- 4. Status Badge -->
+                    <div class="status-badge">
+                        {% if row_class == 'leader' %}★ Leading{% elif row_class == 'trailer' %}▼ Trailing{% else %}Contending{% endif %}
+                    </div>
+                </div>
+
+                <!-- Background Progress Bar -->
+                <div class="progress-bg">
+                    <div class="progress-fill" style="width: {{ c.get('Percentage', 0) }}%;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    <!-- FOOTER WITH SECRET LINK -->
+    <footer>
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+            <p>&copy; 2024 Election Commission of Pakistan.</p>
+            <p style="font-size:0.8rem; margin-top:10px; opacity:0.6;">Simulated Platform for Educational Purposes.</p>
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <a href="/admin/voter-list" style="color: #475569; text-decoration: none; font-size: 0.75rem; opacity: 0.5; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.5'">System Integrity</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

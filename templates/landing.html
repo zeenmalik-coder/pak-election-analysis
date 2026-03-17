@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pakistan Election 2024 | Official Portal</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+<style>
+    /* ===== VARIABLES & RESET ===== */
+    :root {
+        --pak-green: #00401E;
+        --pak-dark: #002210;
+        --gold: #D4AF37;
+        --gold-light: #F9D86C;
+        --white: #FFFFFF;
+        --text-light: #d1fae5;
+        --text-muted: #94a3b8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* ===== BODY & ANIMATIONS ===== */
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(180deg, var(--pak-green) 0%, var(--pak-dark) 100%);
+        color: var(--white);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+
+    @keyframes pulseGold {
+        0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+    }
+
+    /* ===== CONTAINER ===== */
+    .container {
+        width: 100%;
+        max-width: 480px; /* Optimal mobile width */
+        margin: 0 auto;
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        margin-bottom: 10px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .brand {
+        font-weight: 800;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: -0.5px;
+    }
+
+    .nav-links a {
+        color: var(--white);
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-left: 15px;
+        transition: color 0.3s;
+        opacity: 0.9;
+    }
+    .nav-links a:hover { color: var(--gold); opacity: 1; }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+        text-align: center;
+        animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        margin-bottom: 30px;
+    }
+
+    .badge {
+        background: var(--gold);
+        color: var(--pak-green);
+        padding: 5px 12px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 15px;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+        font-weight: 900;
+        line-height: 1.1;
+        margin-bottom: 5px;
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .urdu {
+        font-family: 'Noto Nastaliq Urdu', serif;
+        color: var(--gold);
+        font-size: 1.3rem;
+        margin: 10px 0 20px;
+        display: block;
+        line-height: 1.8;
+        font-weight: 700;
+    }
+
+    .hero-img-container {
+        margin: 20px auto;
+        width: 200px;
+        height: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .hero img {
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn-group {
+        display: flex;
+        gap: 12px;
+        margin: 25px 0;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        text-align: center;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+        background: var(--white);
+        color: var(--pak-green);
+        box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+    }
+    .btn-primary:hover {
+        background: var(--gold);
+        color: var(--pak-green);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+    }
+
+    .btn-outline {
+        border: 2px solid rgba(255,255,255,0.3);
+        color: var(--white);
+        background: transparent;
+    }
+    .btn-outline:hover {
+        border-color: var(--white);
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-2px);
+    }
+
+    /* ===== FEATURES LIST ===== */
+    .features {
+        margin-top: 20px;
+        text-align: left;
+        background: rgba(255,255,255,0.05);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .features div {
+        font-size: 0.85rem;
+        color: var(--text-light);
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .features div:last-child { margin-bottom: 0; }
+    .features span { color: var(--gold); font-weight: bold; font-size: 1rem; }
+
+    /* ===== HOW IT WORKS ===== */
+    .section {
+        margin-top: 40px;
+        text-align: center;
+        animation: fadeInUp 0.8s ease-out 0.4s backwards;
+    }
+
+    .section h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 25px;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section h2::after {
+        content: '';
+        display: block;
+        width: 40px;
+        height: 3px;
+        background: var(--gold);
+        margin: 8px auto 0;
+        border-radius: 2px;
+    }
+
+    .steps {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .step {
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(5px);
+        padding: 20px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.3s ease;
+        cursor: default;
+    }
+
+    .step:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateY(-5px);
+        border-color: var(--gold);
+    }
+
+    .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--gold);
+        color: var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 12px;
+        font-weight: 800;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        animation: pulseGold 2s infinite;
+    }
+
+    .step:hover .step-number {
+        background: var(--gold);
+        color: var(--pak-green);
+        animation: none;
+        transform: scale(1.1);
+    }
+
+    .step h4 {
+        font-size: 0.85rem;
+        color: var(--gold);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+    }
+
+    .step p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        line-height: 1.4;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+        text-align: center;
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-top: 40px;
+        padding: 20px 0;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        animation: fadeInUp 0.8s ease-out 0.6s backwards;
+    }
+    
+    .footer a {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.7rem;
+        opacity: 0.6;
+        transition: opacity 0.3s;
+    }
+    .footer a:hover { opacity: 1; color: var(--gold); }
+
+    /* ===== DESKTOP TWEAKS ===== */
+    @media (min-width: 768px) {
+        .container { max-width: 900px; }
+        .hero h1 { font-size: 3rem; }
+        .hero-img-container { width: 280px; height: 280px; }
+        .steps { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .btn-group { justify-content: center; }
+        .btn { width: auto; padding: 12px 30px; }
+        .features { max-width: 500px; margin: 20px auto; }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="brand">
+            <span style="font-size: 1.4rem;">🇵🇰</span>
+            <span>Election 2024</span>
+        </div>
+        <div class="nav-links">
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <div class="badge">Official Portal</div>
+        <h1>2024 ELECTION</h1>
+        <span class="subtitle">Your Vote is Your Voice</span>
+        <span class="urdu">آپ کی آواز، آپ کا مستقبل</span>
+
+        <div class="hero-img-container">
+            <!-- Using a high-quality SVG icon for the ballot box -->
+          <img src="{{ url_for('static', filename='images/hero.jpg') }}" alt=>
+        </div>
+
+        <div class="btn-group">
+            <a href="/login" class="btn btn-primary">Vote Now</a>
+            <a href="/register" class="btn btn-outline">Register</a>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="features">
+            <div><span>✓</span> Secure & Encrypted Voting</div>
+            <div><span>✓</span> Live Real-Time Results</div>
+            <div><span>✓</span> Accessible Nationwide</div>
+        </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="section">
+        <h2>How It Works</h2>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Register</h4>
+                <p>Create account with CNIC</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Verify</h4>
+                <p>Secure login process</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Vote</h4>
+                <p>Select your candidate</p>
+            </div>
+
+            <div class="step">
+                <div class="step-number" style="border-color: var(--pak-green); background: rgba(212, 175, 55, 0.1);">4</div>
+                <h4 style="color: var(--white);">Track</h4>
+                <p style="color: var(--text-light);">Watch live results</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>&copy; 2024 Election Commission of Pakistan</p>
+        <p style="margin-top: 5px; font-size: 0.65rem; opacity: 0.5;">Simulated Platform for Educational Purposes</p>
+        <div style="margin-top: 15px;">
+            <a href="/admin/voter-list">System Integrity Check</a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
